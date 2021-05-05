@@ -115,7 +115,9 @@ export default {
   data() {
     return {
       video: {},
-      ordinates: []
+      ordinates: [],
+      diffREyeEar: 0,
+      diffLEyeEar: 0
     }
   },
   computed:{
@@ -164,6 +166,23 @@ export default {
       }).then(prediction => {
         this.ordinates = prediction[0].keypoints
         console.log(this.ordinates)
+
+        // Right Eye and Right Ear
+        this.diffREyeEar= this.ordinates[2].position.x - this.ordinates[4].position.x
+        if(this.diffREyeEar > 20){
+          console.log('Looking Straight')
+        }else{
+          console.log('Looking Right')
+        }
+
+        // Left Eye and Left Ear
+        this.diffLEyeEar = this.ordinates[1].position.x - this.ordinates[3].position.x
+        if(this.diffLEyeEar < -20){
+          console.log('Looking Straight')
+        }else{
+          console.log('Looking left')
+        }
+
       })
     }
   },

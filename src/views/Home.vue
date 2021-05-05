@@ -25,7 +25,7 @@
             placeholder="Type text here or click microphone icon to speak"
             append-icon="mdi-microphone"
             @click:append="getResponse()"
-            v-model="userSpeech"
+            v-model="input"
         >
         </v-text-field>
         <v-btn color="primary" @click="getPrediction()">
@@ -46,23 +46,23 @@
             <tbody>
             <tr>
               <td>Identity Attack</td>
-              <td>false</td>
+              <td> {{ getIdentityAttackFlag }} </td>
             </tr>
             <tr>
               <td>Insult</td>
-              <td>false</td>
+              <td> {{ getInsultFlag }} </td>
             </tr>
             <tr>
               <td>Sexual Explicit</td>
-              <td>false</td>
+              <td> {{ getSexualExplicitFlag }} </td>
             </tr>
             <tr>
               <td>Threat</td>
-              <td>false</td>
+              <td> {{ getThreatFlag }} </td>
             </tr>
             <tr>
               <td>Toxicity</td>
-              <td>false</td>
+              <td> {{ getToxicityFlag }} </td>
             </tr>
             </tbody>
           </template>
@@ -78,31 +78,41 @@
 
 <script>
 
-import {startRecognition} from "@/components/speechRecognition";
+//import {startRecognition} from "@/components/speechRecognition";
 import Avatar from "@/components/avatar";
-import {mapState} from "vuex";
+import {mapState, mapGetters} from "vuex";
 import {toxicityClassification} from "@/components/speechToxicity";
 
 
 export default {
   name: 'Home',
+  data(){
+    return{
+      input: ''
+    }
+  },
   components: {
     Avatar
     //
   },
   methods: {
+    changeColor(){
+      document.body.style.color = "purple";
+      return false
+    },
     getResponse() {
-      this.$store.commit('updateUserSpeech', '')
+      //this.$store.commit('updateUserSpeech', '')
       //Start recognition here
-      startRecognition();
+      //startRecognition();
       //toxicityClassification(0.9, 'You suck');
     },
     getPrediction(){
-      toxicityClassification('0.9', this.userSpeech)
+      toxicityClassification('0.65', this.input)
     }
   },
   computed:{
     ...mapState(['userSpeech']),
+    ...mapGetters(['getInsultFlag','getIdentityAttackFlag','getSexualExplicitFlag','getThreatFlag','getToxicityFlag']),
     videowidth(){
       return window.innerWidth/2 - 175
     }
