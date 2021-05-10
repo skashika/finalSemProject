@@ -10,7 +10,8 @@ export default new Vuex.Store({
     identityAttackFlag: false,
     sexualExplicitFlag: false,
     threatFlag: false,
-    toxicityFlag: false
+    toxicityFlag: false,
+    loaderFlag: true
   },
   mutations: {
     updateUserSpeech(state, userSpeech){
@@ -31,6 +32,9 @@ export default new Vuex.Store({
     updateToxicityFlag(state, toxicityFlag){
       state.toxicityFlag = toxicityFlag
     },
+    updateLoaderFlag(state, loaderFlag){
+      state.loaderFlag = loaderFlag
+    }
   },
   actions: {
   },
@@ -42,6 +46,7 @@ export default new Vuex.Store({
     getIdentityAttackFlag: state => state.identityAttackFlag,
     getSexualExplicitFlag: state => state.sexualExplicitFlag,
     getThreatFlag: state => state.threatFlag,
-    getToxicityFlag: state => state.toxicityFlag
+    getToxicityFlag: state => state.toxicityFlag,
+    getLoaderFlag: state => state.loaderFlag
   }
 })

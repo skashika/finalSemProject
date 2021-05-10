@@ -2,17 +2,9 @@
   <div>
     <v-row>
       <v-col
-          cols="6"
-          md="6"
-          lg="6">
-        <avatar
-            :initial-width="videowidth">
-        </avatar>
-      </v-col>
-      <v-col
-          cols="6"
-          md="6"
-          lg="6"
+          cols="12"
+          md="12"
+          lg="12"
           align="center"
           class="mt-5">
         <h1>
@@ -20,54 +12,57 @@
         </h1>
         <v-text-field
             outlined
-            style="width: 90%"
+            style="width: 80%"
             class="mt-10"
-            placeholder="Type text here or click microphone icon to speak"
-            append-icon="mdi-microphone"
-            @click:append="getResponse()"
+            placeholder="Type text here"
             v-model="input"
         >
         </v-text-field>
-        <v-btn color="primary" @click="getPrediction()">
+        <v-btn color="primary" @click="getPrediction()" class="mt-5 mb-5">
           Predict Toxicity
         </v-btn>
-        <v-simple-table dense class="mt-10" style="width: 80%">
+        <v-simple-table class="mt-10" height="500px" style="width: 80%; border: 2px" v-if="loaderFlag">
           <template v-slot:default>
             <thead>
             <tr>
-              <th class="text-left text-subtitle-1">
+              <th class="text-left text-h4">
                 Category
               </th>
-              <th class="text-left text-subtitle-1">
+              <th class="text-left text-h4">
                 <span class="text--black"> Match </span>
               </th>
             </tr>
             </thead>
             <tbody>
             <tr>
-              <td>Identity Attack</td>
-              <td> {{ getIdentityAttackFlag }} </td>
+              <td class="text-subtitle-1">Identity Attack</td>
+              <td v-if="!getIdentityAttackFlag" class="text-uppercase text-subtitle-1"> <span style="color: green">{{ getIdentityAttackFlag }}</span>  </td>
+              <td v-else class="text-uppercase text-subtitle-1"> <span style="color: darkred">{{ getIdentityAttackFlag }}</span>  </td>
             </tr>
             <tr>
-              <td>Insult</td>
-              <td> {{ getInsultFlag }} </td>
+              <td class="text-subtitle-1">  Insult </td>
+              <td class="text-uppercase text-subtitle-1" v-if="!getInsultFlag"> <span style="color: green"> {{ getInsultFlag }} </span> </td>
+              <td class="text-uppercase text-subtitle-1" v-else> <span style="color: darkred"> {{ getInsultFlag }} </span> </td>
             </tr>
             <tr>
-              <td>Sexual Explicit</td>
-              <td> {{ getSexualExplicitFlag }} </td>
+              <td class="text-subtitle-1"> Sexual Explicit </td>
+              <td class="text-uppercase text-subtitle-1" v-if="!getSexualExplicitFlag"> <span style="color: green"> {{ getSexualExplicitFlag }} </span> </td>
+              <td class="text-uppercase text-subtitle-1" v-else> <span style="color: darkred"> {{ getSexualExplicitFlag }} </span> </td>
             </tr>
             <tr>
-              <td>Threat</td>
-              <td> {{ getThreatFlag }} </td>
+              <td class="text-subtitle-1"> Threat </td>
+              <td class="text-uppercase text-subtitle-1" v-if="!getThreatFlag"> <span style="color: green"> {{ getThreatFlag }} </span>
+              <td class="text-uppercase text-subtitle-1" v-else> <span style="color: darkred"> {{ getThreatFlag }} </span></td>
             </tr>
             <tr>
-              <td>Toxicity</td>
-              <td> {{ getToxicityFlag }} </td>
+              <td class="text-subtitle-1">  Toxicity </td>
+              <td class="text-uppercase text-subtitle-1" v-if = "!getToxicityFlag"> <span style="color: green"> {{ getToxicityFlag }} </span></td>
+              <td class="text-uppercase text-subtitle-1" v-else> <span style="color: darkred"> {{ getToxicityFlag }} </span></td>
             </tr>
             </tbody>
           </template>
         </v-simple-table>
-
+        <loader v-else></loader>
       </v-col>
     </v-row>
   </div>
@@ -79,10 +74,9 @@
 <script>
 
 //import {startRecognition} from "@/components/speechRecognition";
-import Avatar from "@/components/avatar";
 import {mapState, mapGetters} from "vuex";
 import {toxicityClassification} from "@/components/speechToxicity";
-
+import loader from "@/components/loader";
 
 export default {
   name: 'Home',
@@ -92,8 +86,7 @@ export default {
     }
   },
   components: {
-    Avatar
-    //
+    loader
   },
   methods: {
     changeColor(){
@@ -107,11 +100,12 @@ export default {
       //toxicityClassification(0.9, 'You suck');
     },
     getPrediction(){
-      toxicityClassification('0.65', this.input)
+      this.$store.commit('updateLoaderFlag', false)
+      toxicityClassification('0.75', this.input)
     }
   },
   computed:{
-    ...mapState(['userSpeech']),
+    ...mapState(['userSpeech', 'loaderFlag']),
     ...mapGetters(['getInsultFlag','getIdentityAttackFlag','getSexualExplicitFlag','getThreatFlag','getToxicityFlag']),
     videowidth(){
       return window.innerWidth/2 - 175

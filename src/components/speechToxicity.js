@@ -11,7 +11,7 @@ let toxicityClassification = (threshold,speech) => {
             console.log(predictions)
 
             // Identity Attack Identifier
-            if(!predictions[0].results[0].match){
+            if(!predictions[0].results[0].match && predictions[0].results[0].match !== null){
                 if(predictions[0].results[0].probabilities[1] > 0.1){
                    store.commit('updateIdentityAttackFlag',true)
                 }else{
@@ -22,7 +22,7 @@ let toxicityClassification = (threshold,speech) => {
             }
 
             // Insult Identifier
-            if(!predictions[1].results[0].match){
+            if(!predictions[1].results[0].match && predictions[1].results[0].match !== null){
                 if(predictions[1].results[0].probabilities[1] > 0.1){
                     store.commit('updateInsultFlag',true)
                 }
@@ -35,7 +35,7 @@ let toxicityClassification = (threshold,speech) => {
 
 
             // Sexual Explicit Identifier
-            if(!predictions[2].results[0].match){
+            if(!predictions[2].results[0].match && predictions[2].results[0].match !== null){
                 if(predictions[2].results[0].probabilities[1] > 0.1){
                     store.commit('updateSexualExplicitFlag',true)
                 }
@@ -43,7 +43,11 @@ let toxicityClassification = (threshold,speech) => {
                     store.commit('updateSexualExplicitFlag',false)
                 }
             }else{
-                store.commit('updateSexualExplicitFlag',predictions[2].results[0].match)
+                if(predictions[2].results[0].match === null){
+                    store.commit('updateSexualExplicitFlag',false)
+                }else{
+                    store.commit('updateSexualExplicitFlag',predictions[2].results[0].match)
+                }
             }
 
             // Threat Identifier
@@ -69,6 +73,10 @@ let toxicityClassification = (threshold,speech) => {
             }else{
                 store.commit('updateToxicityFlag',predictions[4].results[0].match)
             }
+
+
+            //update loader flag
+            store.commit('updateLoaderFlag', true)
         })
     })
 }
